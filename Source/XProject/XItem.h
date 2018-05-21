@@ -18,6 +18,12 @@ public:
 	AXItem();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Use(class AXBaseCharacter * Character);
+
+	UFUNCTION(BlueprintCallable)
 	virtual void OnUse(class AXBaseCharacter * Character);
 
 	UFUNCTION(BlueprintCallable)
@@ -41,10 +47,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	UShapeComponent * CollisionComponent;
 
-	// Komponenty statycznej siatki 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
-	UStaticMeshComponent * ActorMeshComponent;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -57,4 +59,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	int StackMaximalSize;
+
+	UPROPERTY(EditAnywhere)
+	float OnUseColdown;
+
+protected:
+	UPROPERTY(EditAnywhere)
+	float Coldown;
+
 };

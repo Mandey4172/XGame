@@ -7,7 +7,8 @@
 AXItem::AXItem()
 {
 	// Czy character ma wywowylac metode Tick()
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
 	// Tworzenie komponentu kuli z kolizja
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	// Ustawianie promienia kuli
@@ -15,9 +16,6 @@ AXItem::AXItem()
 	MyCollisionComponent->InitSphereRadius(1.0f);
 	// Ustanienie glownego komponentu jako komponentu kuli
 	RootComponent = CollisionComponent;
-
-	ActorMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	ActorMeshComponent->AttachTo(GetRootComponent());
 
 	bIsStackable = false;
 	StackSize = 1;
@@ -29,6 +27,24 @@ void AXItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AXItem::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (Coldown > 0.f)
+	{
+		Coldown -= DeltaTime;
+	}
+}
+
+void AXItem::Use(AXBaseCharacter * Character)
+{
+	if (Coldown <= 0.f)
+	{
+		OnUse(Character);
+		Coldown = OnUseColdown;
+	}
 }
 
 void AXItem::OnUse(AXBaseCharacter * Character)

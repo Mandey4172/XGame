@@ -86,7 +86,7 @@ protected:
 	AXItem * ItemToPick;
 
 	UPROPERTY(EditAnywhere)
-	FVector PickUpRange;
+	float PickUpRange;
 
 	float ItemColdown;
 
@@ -94,3 +94,6 @@ protected:
 	void TestInput();
 };
 
+//
+//UPROPERTY(EditAnywhere)
+//FVector MaxRange;

@@ -11,7 +11,7 @@
 AXPlayerController::AXPlayerController()
 {
 	this->PrimaryActorTick.bCanEverTick = true;
-	PickUpRange = FVector(600.f, 0.f, 0.f);
+	PickUpRange = 600.f;
 }
 
 void AXPlayerController::Tick(float DeltaTime)
@@ -21,35 +21,59 @@ void AXPlayerController::Tick(float DeltaTime)
 	APawn * Pawn = GetPawn();
 	if (CameraActor && World)
 	{
-		const FName TraceTag("MyTraceTag");
+		const FName TraceTag("XTraceTag");
 
-		World->DebugDrawTraceTag = TraceTag;
+		//World->DebugDrawTraceTag = TraceTag;
 
 		FCollisionQueryParams ColParams;
 		ColParams.bTraceComplex = true;
 		ColParams.bTraceAsyncScene = true;
 		ColParams.bReturnPhysicalMaterial = false;
 		ColParams.TraceTag = TraceTag;
-		FRotator R;
+
+		FRotator Rotation;
 		FVector Start;
-		CameraActor->GetActorEyesViewPoint(Start, R);
-		FVector End = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(PickUpRange);
+		CameraActor->GetActorEyesViewPoint(Start, Rotation);
+		FVector MaxRange = FVector(PickUpRange, 0.f, 0.f);
+		FVector End = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
 		FHitResult HitOut;
 		World->LineTraceSingleByChannel(HitOut, Start, End, Pawn->GetRootComponent()->GetCollisionObjectType(), ColParams);
 		AActor * Actor = HitOut.Actor.Get();
 		AXItem * Item = Cast<AXItem>(Actor);
-		if (Item)
+		if (Item && HitOut.Distance < PickUpRange)
 		{
 			ItemColdown = 2.5f;
 			ItemToPick = Item;
 		}
-		this->CursorLocation = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(10000 * PickUpRange.Rotation().Vector());;
-		//End -= Pawn->GetActorLocation();
-		//End.Normalize();
-		//R = End.Rotation();
+		/*this->CursorLocation = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
+		if (HitOut.bBlockingHit)
+		{
+			this->CursorLocation = HitOut.Location;
+		}*/
 		//AXBaseCharacter * Character = Cast<AXBaseCharacter>(Pawn);
 		//if (Character)
-		//	Character->AimPitch = R.Pitch;
+		//{
+		//	FVector CharacterStart = Character->GetActorLocation();
+		//	FVector CharacterEnd = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
+		//	if (Actor)
+		//	{
+		//		CharacterEnd = HitOut.Location;
+		//	}
+		//	FVector Result = CharacterEnd - CharacterStart;
+		//	FRotator ARot = Character->GetActorRotation();
+		//	ARot.Pitch = Result.Rotation().Pitch;
+		//	Character->AimPitch = ARot.Pitch;
+		//	//Character->SetActorRotation(ARot);
+		//}
+		
+		
+		
+		//End -= Pawn->GetActorLocation();
+		//End.Normalize();
+		////R = End.Rotation();
+		//AXBaseCharacter * Character = Cast<AXBaseCharacter>(Pawn);
+		//if (Character)
+		//	Character->AimPitch = End.Rotation().Pitch;
 		//World->LineTraceSingleByChannel(Start, End,Pawn->GetRootComponent()->GetCollisionObjectType());
 	}
 	if (ItemColdown > 0.f)
@@ -91,7 +115,7 @@ AXCamera * AXPlayerController::GetCamera()
 
 AXItem * AXPlayerController::GetItemToPick()
 {
-	return ItemToPick;;
+	return ItemToPick;
 }
 
 void AXPlayerController::BeginPlay()
@@ -147,6 +171,8 @@ void AXPlayerController::AddYawInput(float Value)
 		FRotator Rotation = Character->GetActorRotation();
 		Rotation.Yaw += Value;
 		Character->SetActorRotation(Rotation);
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, Rotation.ToString() );
 	}
 }
 
@@ -156,7 +182,7 @@ void AXPlayerController::AddPitchInput(float Value)
 	if (CameraActor && Character)
 	{
 		CameraActor->AddPitch(Value);
-//		Character->AimPitch = CameraActor->GetPitch();
+		Character->AimPitch += Value;
 	}
 }
 

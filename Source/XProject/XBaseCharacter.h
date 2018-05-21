@@ -86,6 +86,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<AXItem *> GetBackpack();
 
+	UFUNCTION(BlueprintCallable)
+	float GetMaxHealth();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaxHealth(float MaxHealth);
+
+	UFUNCTION(BlueprintCallable)
+	AXWeapon * GetRightHandWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	AXWeapon * GetLeftHandWeapon();
+
 	float AimPitch;
 
 protected:
@@ -107,10 +119,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TArray<AXItem *> Backpack;
-
-	float CharacterBlockTime;
-	//
 	
+	UPROPERTY(EditAnywhere)
+	float MaxHealth;
 	//
 	UPROPERTY(EditAnywhere)
 	float Health;
@@ -119,6 +130,9 @@ protected:
 	FVector DropOffset;
 
 	bool IsJumping;
-	bool IsUsingHands;
-	
+	bool IsUsingRightHand;
+	bool IsUsingLeftHand;
+
+	float RightHandBlockTime;
+	float LeftHandBlockTime;
 };

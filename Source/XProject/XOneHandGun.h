@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "XOneHandWeapon.h"
+#include "XGun.h"
 #include "XOneHandGun.generated.h"
 
 /**
@@ -18,12 +19,26 @@ public:
 	AXOneHandGun();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Use();
+	virtual void Use(class AXBaseCharacter * Character) override;
+
+
+	UFUNCTION(BlueprintCallable)
+	virtual void OnUse(class AXBaseCharacter * Character) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Tick(float DeltaTime) override;
 
 protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<class AXProjectile> BulletType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector Offset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float UseDelay;
 };

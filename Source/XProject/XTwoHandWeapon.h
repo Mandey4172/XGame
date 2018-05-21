@@ -18,5 +18,13 @@ public:
 	AXTwoHandWeapon();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Use();
+	virtual void OnUse(class AXBaseCharacter * Character);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Tick(float DeltaTime) override;
+
+protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 };

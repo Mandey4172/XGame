@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "XOneHandWeapon.h"
-
+#include "XBaseCharacter.h"
 
 AXOneHandWeapon::AXOneHandWeapon()
 {
 	RightHand = true;
 }
 
-void AXOneHandWeapon::Use()
+void AXOneHandWeapon::OnUse(AXBaseCharacter * Character)
 {
-	int x = 10;
+
 }
 
 void AXOneHandWeapon::SetIsRightHand(bool nRightHand)
@@ -21,4 +21,14 @@ void AXOneHandWeapon::SetIsRightHand(bool nRightHand)
 bool AXOneHandWeapon::IsRightHand()
 {
 	return RightHand;
+}
+
+void AXOneHandWeapon::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void AXOneHandWeapon::BeginPlay()
+{
+	Super::BeginPlay();
 }

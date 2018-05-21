@@ -18,14 +18,20 @@ public:
 	AXOneHandWeapon();	
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Use();
+	virtual void OnUse(class AXBaseCharacter * Character) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetIsRightHand(bool RightHand);
 	UFUNCTION(BlueprintCallable)
 	bool IsRightHand();
 
+	UFUNCTION(BlueprintCallable)
+	virtual void Tick(float DeltaTime) override;
+
 protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	bool RightHand;
 };

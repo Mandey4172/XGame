@@ -17,7 +17,9 @@ AXBaseCharacter::AXBaseCharacter()
 
 	//static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAsset(TEXT("StaticMesh'/Game/MyMesh.MyMesh"));
 	this->IsJumping = false;
-	this->IsUsingHands = false;
+
+	this->IsUsingRightHand = false;
+	this->IsUsingLeftHand = false;
 
 	// Czy character ma wywowylac metode Tick()
 	PrimaryActorTick.bCanEverTick = true;
@@ -26,7 +28,9 @@ AXBaseCharacter::AXBaseCharacter()
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this,&AXBaseCharacter::BeginOverlap);
 	
 	Health = 100.f;
-	CharacterBlockTime = 0.f;
+	MaxHealth = 100.f;
+	RightHandBlockTime = 0.f;
+	LeftHandBlockTime = 0.f;
 	AimPitch = 0.f;
 
 	DropOffset = FVector(100.f,0.f,0.f);
@@ -40,19 +44,7 @@ void AXBaseCharacter::BeginPlay()
 	AXPlayerController * PC = Cast<AXPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	if (PC)
 	{
-		AActor * NewCamera = Cast<AActor>(PC->SetupCamera(this));
-		if (NewCamera)
-		{
-			PC->SetViewTarget(NewCamera);
-		}	
-		//AXTwoHandWeapon * TwoHand = Cast<AXTwoHandWeapon>(RightHandWeapon);
-		//AXOneHandWeapon * MainHand = Cast<AXOneHandWeapon>(RightHandWeapon);
-		//AXOneHandWeapon * OffHand = Cast<AXOneHandWeapon>(LeftHandWeapon);
-		//if (TwoHand)
-		//	EquipTwoHandWeapon(TwoHand);
-		//else
-		//	EquipOneHandWeapon(MainHand, OffHand);
-		//EquipWeapon(RightHandWeapon);
+		PC->SetupCamera(this);
 	}
 	UWorld* World = GetWorld();
 	if (World)
@@ -85,28 +77,35 @@ void AXBaseCharacter::BeginPlay()
 void AXBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (IsUsingHands && (CharacterBlockTime <= 0))
-	{
-		if (RightHandWeapon && LeftHandWeapon == RightHandWeapon)
+	/*if (IsUsingHands && (CharacterBlockTime <= 0))
+	{*/
+		if (RightHandWeapon && LeftHandWeapon == RightHandWeapon 
+			&& IsUsingRightHand  && IsUsingLeftHand 
+			&& (RightHandBlockTime <= 0.f) && (LeftHandBlockTime <= 0.f))
 		{
-			RightHandWeapon->Use();
+			RightHandWeapon->Use(this);
+			//LeftHandBlockTime = RightHandBlockTime;
 		}
 		else
 		{
-			if (RightHandWeapon)
+			if (RightHandWeapon && IsUsingRightHand && (RightHandBlockTime <= 0.f))
 			{
-				RightHandWeapon->Use();
+				RightHandWeapon->Use(this);
 			}
-			if (LeftHandWeapon)
+			if (LeftHandWeapon && IsUsingLeftHand && (LeftHandBlockTime <= 0.f))
 			{
-				LeftHandWeapon->Use();
+				LeftHandWeapon->Use(this);
 			}
 		}
-		CharacterBlockTime = 0.4;
-	}
-	if (CharacterBlockTime > 0)
+		
+	//}
+	if (RightHandBlockTime > 0)
 	{
-		CharacterBlockTime -= DeltaTime;
+		RightHandBlockTime -= DeltaTime;
+	}
+	if (LeftHandBlockTime > 0)
+	{
+		LeftHandBlockTime -= DeltaTime;
 	}
 }
 
@@ -132,12 +131,14 @@ void AXBaseCharacter::MoveRight(float Value)
 
 void AXBaseCharacter::StartUseHand()
 {
-	IsUsingHands = true;
+	IsUsingRightHand = true;
+	IsUsingLeftHand = true;
 }
 
 void AXBaseCharacter::StopUseHand()
 {
-	IsUsingHands = false;
+	IsUsingRightHand = false;
+	IsUsingLeftHand = false;
 }
 
 void AXBaseCharacter::StartJump()
@@ -363,8 +364,10 @@ void AXBaseCharacter::EquipOneHandWeapon(AXOneHandWeapon * MainWeapon, AXOneHand
 
 void AXBaseCharacter::UnequipWeapon()
 {
+	FDetachmentTransformRules DRules(EDetachmentRule::KeepWorld, true);
 	if (RightHandWeapon)
 	{
+		RightHandWeapon->DetachFromActor(DRules);
 		RightHandWeapon->DetachRootComponentFromParent();
 		RightHandWeapon->SetActorHiddenInGame(true);
 		RightHandWeapon->SetActorEnableCollision(false);
@@ -376,7 +379,7 @@ void AXBaseCharacter::UnequipWeapon()
 	}
 	if (LeftHandWeapon)
 	{
-		LeftHandWeapon->DetachRootComponentFromParent();
+		LeftHandWeapon->DetachFromActor(DRules);
 		LeftHandWeapon->SetActorHiddenInGame(true);
 		LeftHandWeapon->SetActorEnableCollision(false);
 	}
@@ -410,6 +413,26 @@ void AXBaseCharacter::BeginOverlap(UPrimitiveComponent * OverlappedComp, AActor 
 TArray<AXItem*> AXBaseCharacter::GetBackpack()
 {
 	return Backpack;
+}
+
+float AXBaseCharacter::GetMaxHealth()
+{
+	return MaxHealth;
+}
+
+void AXBaseCharacter::SetMaxHealth(float NewMaxHealth)
+{
+	this->MaxHealth = NewMaxHealth;
+}
+
+AXWeapon * AXBaseCharacter::GetRightHandWeapon()
+{
+	return RightHandWeapon;
+}
+
+AXWeapon * AXBaseCharacter::GetLeftHandWeapon()
+{
+	return LeftHandWeapon;
 }
 
 

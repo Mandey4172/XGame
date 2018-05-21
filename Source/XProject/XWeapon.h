@@ -19,6 +19,18 @@ class XPROJECT_API AXWeapon : public AXItem
 public:
 	AXWeapon();
 
-	virtual void Use();
+	virtual void OnUse(class AXBaseCharacter * Character);
+
+	// Komponenty statycznej siatki 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+	USkeletalMeshComponent * ActorMeshComponent;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Tick(float DeltaTime) override;
+
+protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 };
