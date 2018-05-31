@@ -26,7 +26,7 @@ void AXCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor * Owner = this->GetOwner();
+	AActor * Owner = GetOwner();
 	if (Owner)
 	{
 		PrimaryActorTick.AddPrerequisite(Owner, Owner->PrimaryActorTick);
@@ -46,7 +46,7 @@ void AXCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AActor * Owner = this->GetOwner();
+	AActor * Owner = GetOwner();
 	if (Owner)
 	{
 		FVector Location;
@@ -108,13 +108,4 @@ float AXCamera::GetYaw()
 	return Yaw;
 }
 
-//void AXCamera::SetTarget(AActor * NewTarget)
-//{
-//	this->Target = NewTarget;
-//}
-//
-//AActor * AXCamera::GetTarget()
-//{
-//	return this->Target;
-//}
 

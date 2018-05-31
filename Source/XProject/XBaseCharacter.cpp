@@ -16,21 +16,19 @@ AXBaseCharacter::AXBaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//static ConstructorHelpers::FObjectFinder<UStaticMesh>MeshAsset(TEXT("StaticMesh'/Game/MyMesh.MyMesh"));
-	this->IsJumping = false;
+	IsJumping = false;
 
-	this->IsUsingRightHand = false;
-	this->IsUsingLeftHand = false;
+	IsUsingRightHand = false;
+	IsUsingLeftHand = false;
 
 	// Czy character ma wywowylac metode Tick()
 	PrimaryActorTick.bCanEverTick = true;
 
-	this->GetCapsuleComponent()->bGenerateOverlapEvents = true;
-	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this,&AXBaseCharacter::BeginOverlap);
+	GetCapsuleComponent()->bGenerateOverlapEvents = true;
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this,&AXBaseCharacter::BeginOverlap);
 	
-	Health = 100.f;
 	MaxHealth = 100.f;
-	RightHandBlockTime = 0.f;
-	LeftHandBlockTime = 0.f;
+	Health = MaxHealth;
 	AimPitch = 0.f;
 
 	DropOffset = FVector(100.f,0.f,0.f);
@@ -41,6 +39,8 @@ void AXBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Health = MaxHealth;
+
 	AXPlayerController * PC = Cast<AXPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	if (PC)
 	{
@@ -53,8 +53,8 @@ void AXBaseCharacter::BeginPlay()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		bool IsOneHand = true;
-		AXWeapon * RWeapon = World->SpawnActor<AXWeapon>(this->RightHandWeaponClass, SpawnParams);
-		AXWeapon * LWeapon = World->SpawnActor<AXWeapon>(this->LeftHandWeaponClass, SpawnParams);
+		AXWeapon * RWeapon = World->SpawnActor<AXWeapon>(RightHandWeaponClass, SpawnParams);
+		AXWeapon * LWeapon = World->SpawnActor<AXWeapon>(LeftHandWeaponClass, SpawnParams);
 
 		if (Cast<AXTwoHandWeapon>(RWeapon))
 		{
@@ -77,35 +77,22 @@ void AXBaseCharacter::BeginPlay()
 void AXBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	/*if (IsUsingHands && (CharacterBlockTime <= 0))
-	{*/
-		if (RightHandWeapon && LeftHandWeapon == RightHandWeapon 
-			&& IsUsingRightHand  && IsUsingLeftHand 
-			&& (RightHandBlockTime <= 0.f) && (LeftHandBlockTime <= 0.f))
+
+	if (RightHandWeapon && LeftHandWeapon && (LeftHandWeapon == RightHandWeapon)
+		&& IsUsingRightHand  && IsUsingLeftHand )
+	{
+		RightHandWeapon->Use(this);
+	}
+	else
+	{
+		if (RightHandWeapon && IsUsingRightHand)
 		{
 			RightHandWeapon->Use(this);
-			//LeftHandBlockTime = RightHandBlockTime;
 		}
-		else
+		if (LeftHandWeapon && IsUsingLeftHand)
 		{
-			if (RightHandWeapon && IsUsingRightHand && (RightHandBlockTime <= 0.f))
-			{
-				RightHandWeapon->Use(this);
-			}
-			if (LeftHandWeapon && IsUsingLeftHand && (LeftHandBlockTime <= 0.f))
-			{
-				LeftHandWeapon->Use(this);
-			}
+			LeftHandWeapon->Use(this);
 		}
-		
-	//}
-	if (RightHandBlockTime > 0)
-	{
-		RightHandBlockTime -= DeltaTime;
-	}
-	if (LeftHandBlockTime > 0)
-	{
-		LeftHandBlockTime -= DeltaTime;
 	}
 }
 
@@ -144,7 +131,7 @@ void AXBaseCharacter::StopUseHand()
 void AXBaseCharacter::StartJump()
 {
 	IsJumping = true;
-	this->Jump();
+	Jump();
 }
 
 void AXBaseCharacter::StopJump()
@@ -172,14 +159,14 @@ void AXBaseCharacter::InflictDamage(float DamageAmount, const FHitResult & Hit)
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	TSubclassOf<UDamageType> const ValidDamageTypeClass = TSubclassOf<UDamageType>(UDamageType::StaticClass());
 	FDamageEvent DamageEvent(ValidDamageTypeClass);
-	this->TakeDamage(DamageAmount, DamageEvent, PlayerController, this);
+	TakeDamage(DamageAmount, DamageEvent, PlayerController, this);
 }
 
 float AXBaseCharacter::HealDamage(float HealAmount)
 {
 	if (HealAmount > 0)
 	{
-		this->Health += HealAmount;
+		Health += HealAmount;
 		return HealAmount;
 	}
 	return 0.f;
@@ -201,17 +188,17 @@ void AXBaseCharacter::PickUpItem(AXItem * Item)
 		Item->SetActorEnableCollision(false);
 		if (Item->IsStackable())
 		{
-			for(AXItem * BItem : this->Backpack)
+			for(AXItem * BabckpackItem : Backpack)
 			{
-				if (BItem->GetClass() == Item->GetClass())
+				if (BabckpackItem->GetClass() == Item->GetClass())
 				{
-					BItem->AddToStack(Item->GetStackSize());
+					BabckpackItem->AddToStack(Item->GetStackSize());
 					Item->Destroy();
 					break;
 				}
 			}
 		}
-		this->Backpack.Add(Item);
+		Backpack.Add(Item);
 	}
 }
 
@@ -270,30 +257,30 @@ void AXBaseCharacter::EquipTwoHandWeapon(AXTwoHandWeapon * Weapon)
 		SpawnParams.Owner = this;
 		if (Weapon)
 		{
-			this->UnequipWeapon();
-			this->RightHandWeapon = Weapon;
-			this->RightHandWeapon->SetActorHiddenInGame(false);
-			this->RightHandWeapon->SetActorEnableCollision(true);
-			this->RightHandWeaponClass = Weapon->StaticClass();
+			UnequipWeapon();
+			RightHandWeapon = Weapon;
+			RightHandWeapon->SetActorHiddenInGame(false);
+			RightHandWeapon->SetActorEnableCollision(true);
+			RightHandWeaponClass = Weapon->StaticClass();
 		}
 		else if (RightHandWeaponClass)
 		{
-			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(this->RightHandWeaponClass, SpawnParams);
-			this->RightHandWeapon = Cast<AXTwoHandWeapon>(NewWeapon);
+			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(RightHandWeaponClass, SpawnParams);
+			RightHandWeapon = Cast<AXTwoHandWeapon>(NewWeapon);
 		}
 		else if (LeftHandWeaponClass)
 		{
-			this->UnequipWeapon();
-			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(this->LeftHandWeaponClass, SpawnParams);
-			this->RightHandWeapon = Cast<AXTwoHandWeapon>(NewWeapon);
+			UnequipWeapon();
+			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(LeftHandWeaponClass, SpawnParams);
+			RightHandWeapon = Cast<AXTwoHandWeapon>(NewWeapon);
 		}
-		if (this->RightHandWeapon)
+		if (RightHandWeapon)
 		{
-			this->LeftHandWeapon = this->RightHandWeapon;
-			this->LeftHandWeaponClass = this->RightHandWeaponClass;
+			LeftHandWeapon = RightHandWeapon;
+			LeftHandWeaponClass = RightHandWeaponClass;
 			//Przytwierdzenie do postaci
 			FAttachmentTransformRules ARules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-			this->RightHandWeapon->AttachToComponent(GetMesh(), ARules, TEXT("RightHandWeaponSocket"));
+			RightHandWeapon->AttachToComponent(GetMesh(), ARules, TEXT("RightHandWeaponSocket"));
 			
 		}
 	}
@@ -310,27 +297,27 @@ void AXBaseCharacter::EquipOneHandWeapon(AXOneHandWeapon * MainWeapon, AXOneHand
 		if (MainWeapon)
 		{
 			RightHandWeapon = MainWeapon;
-			this->RightHandWeapon->SetActorHiddenInGame(false);
-			this->RightHandWeapon->SetActorEnableCollision(true);
-			this->RightHandWeaponClass = MainWeapon->StaticClass();
+			RightHandWeapon->SetActorHiddenInGame(false);
+			RightHandWeapon->SetActorEnableCollision(true);
+			RightHandWeaponClass = MainWeapon->StaticClass();
 		}
 		else if(RightHandWeaponClass)
 		{
-			this->UnequipWeapon();
-			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(this->RightHandWeaponClass, SpawnParams);
-			this->RightHandWeapon = Cast<AXOneHandWeapon>(NewWeapon);
+			UnequipWeapon();
+			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(RightHandWeaponClass, SpawnParams);
+			RightHandWeapon = Cast<AXOneHandWeapon>(NewWeapon);
 		}
 		if (OffWeapon)
 		{
 			LeftHandWeapon = OffWeapon;
-			this->LeftHandWeapon->SetActorHiddenInGame(false);
-			this->LeftHandWeapon->SetActorEnableCollision(true);
-			this->LeftHandWeaponClass = OffWeapon->StaticClass();
+			LeftHandWeapon->SetActorHiddenInGame(false);
+			LeftHandWeapon->SetActorEnableCollision(true);
+			LeftHandWeaponClass = OffWeapon->StaticClass();
 		}
 		else if (LeftHandWeaponClass)
 		{
-			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(this->LeftHandWeaponClass, SpawnParams);
-			this->LeftHandWeapon = Cast<AXOneHandWeapon>(NewWeapon);
+			AXWeapon * NewWeapon = World->SpawnActor<AXWeapon>(LeftHandWeaponClass, SpawnParams);
+			LeftHandWeapon = Cast<AXOneHandWeapon>(NewWeapon);
 		}
 		if (RightHandWeapon)
 		{
@@ -392,7 +379,7 @@ float AXBaseCharacter::GetHealth()
 
 void AXBaseCharacter::Kill()
 {
-	/*if (this->Weapon)
+	/*if (Weapon)
 		Weapon->Destroy();*/
 	Destroy();
 }
@@ -422,7 +409,7 @@ float AXBaseCharacter::GetMaxHealth()
 
 void AXBaseCharacter::SetMaxHealth(float NewMaxHealth)
 {
-	this->MaxHealth = NewMaxHealth;
+	MaxHealth = NewMaxHealth;
 }
 
 AXWeapon * AXBaseCharacter::GetRightHandWeapon()

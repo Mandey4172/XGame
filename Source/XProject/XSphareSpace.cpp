@@ -22,7 +22,7 @@ void AXSphareSpace::Tick(float DeltaTime)
 {
 	if (RadiusDelta > 0.f)
 	{
-		float NextSize = SphareCollisionComponent->GetScaledSphereRadius() + (DeltaTime * this->RadiusDelta);
+		float NextSize = SphareCollisionComponent->GetScaledSphereRadius() + (DeltaTime * RadiusDelta);
 		if ((NextSize > 0.f) && (NextSize >= RadiusMinimum) && (NextSize <= RadiusMaximum))
 		{
 			SphareCollisionComponent->SetSphereRadius(NextSize);

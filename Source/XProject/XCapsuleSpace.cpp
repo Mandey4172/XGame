@@ -26,7 +26,7 @@ void AXCapsuleSpace::Tick(float DeltaTime)
 	/*if (SpaceSizeDelta.X > 0.f)
 	{
 		FVector NextSize = CapsuleCollisionComponent->GetCollisionShape()->
-		NextSize.X += DeltaTime * this->SpaceSizeDelta.X;
+		NextSize.X += DeltaTime * SpaceSizeDelta.X;
 		if (NextSize.X >= SpaceSizeMinimum.X)
 		{
 			NextSize.X = SpaceSizeMinimum.X;
@@ -40,7 +40,7 @@ void AXCapsuleSpace::Tick(float DeltaTime)
 	if (SpaceSizeDelta.Y > 0.f)
 	{
 		FVector NextSize = CapsuleCollisionComponent->GetScaledCapsuleSize();
-		NextSize.Y += DeltaTime * this->SpaceSizeDelta.Y;
+		NextSize.Y += DeltaTime * SpaceSizeDelta.Y;
 		if (NextSize.Y >= SpaceSizeMinimum.Y)
 		{
 			NextSize.Y = SpaceSizeMinimum.Y;
@@ -54,7 +54,7 @@ void AXCapsuleSpace::Tick(float DeltaTime)
 	if (SpaceSizeDelta.Z > 0.f)
 	{
 		FVector NextSize = CapsuleCollisionComponent->GetScaledCapsuleSize();
-		NextSize.Z += DeltaTime * this->SpaceSizeDelta.Z;
+		NextSize.Z += DeltaTime * SpaceSizeDelta.Z;
 		if (NextSize.Z >= SpaceSizeMinimum.Z)
 		{
 			NextSize.Z = SpaceSizeMinimum.Z;

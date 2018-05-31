@@ -21,17 +21,17 @@ void AXBaseAIController::Possess(class APawn* InPawn)
 	Super::Possess(InPawn);
 
 	AXBaseEnemyCharacter * AICharacter = Cast<AXBaseEnemyCharacter>(InPawn);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("%s" + this->BlackboardComponent->GetName()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("%s" + BlackboardComponent->GetName()));
 	if (AICharacter)
 	{
 		if (AICharacter->BehaviorTreeAsset)
 		{
 			if (AICharacter->BehaviorTreeAsset->BlackboardAsset)
 			{
-				this->BlackboardComp->InitializeBlackboard(*AICharacter->BehaviorTreeAsset->BlackboardAsset);
-				EnemyKeyID = this->BlackboardComp->GetKeyID("Target");
+				BlackboardComp->InitializeBlackboard(*AICharacter->BehaviorTreeAsset->BlackboardAsset);
+				EnemyKeyID = BlackboardComp->GetKeyID("Target");
 			}
-			this->BehaviorTreeComp->StartTree(*AICharacter->BehaviorTreeAsset);
+			BehaviorTreeComp->StartTree(*AICharacter->BehaviorTreeAsset);
 		}
 	}
 }
@@ -40,5 +40,5 @@ void AXBaseAIController::UnPossess()
 {
 	Super::UnPossess();
 
-	this->BehaviorTreeComp->StopTree();
+	BehaviorTreeComp->StopTree();
 }

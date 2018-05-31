@@ -30,62 +30,65 @@ void AXOneHandGun::OnUse(AXBaseCharacter * Character)
 	if (Owner && PlayerController && World)
 	{
 		AXCamera * CameraActor = PlayerController->GetCamera();
-		if (CameraActor)
+		if (CameraActor && BulletType)
 		{
-			if (this->BulletType)
+			FVector Location;
+			FRotator Rotation;
+			FActorSpawnParameters SpawnParams;
+
+			Owner->GetActorEyesViewPoint(Location, Rotation);
+			Rotation = Owner->GetActorRotation();
+			Rotation.Pitch = Owner->AimPitch;
+			FVector CurrentOffset = Offset;
+
+			if (!IsRightHand())
 			{
-				FVector Location;
-				FRotator Rotation;
-				FActorSpawnParameters SpawnParams;
-
-				Owner->GetActorEyesViewPoint(Location, Rotation);
-				Rotation = Owner->GetActorRotation();
-				Rotation.Pitch = Owner->AimPitch;
-				FVector COffset = Offset;
-				if (!IsRightHand())
-				{
-					COffset.Y = -1 * COffset.Y;
-				}
-
-				Location += FTransform(Rotation).TransformVector(COffset);
-
-				AXProjectile * Bullet = World->SpawnActor<AXProjectile>(this->BulletType, Location, Rotation, SpawnParams);
-				
+				CurrentOffset.Y = -1 * CurrentOffset.Y;
+			}
+			//Calculate spawn location
+			Location += FTransform(Rotation).TransformVector(CurrentOffset);
+			//Spawn projectile
+			AXProjectile * Bullet = World->SpawnActor<AXProjectile>(BulletType, Location, Rotation, SpawnParams);
+			if (Bullet)
+			{
+				//Calculate max range base on actor and camera location
 				float Max = FMath::Sqrt(
-						FMath::Pow(Bullet->GetLifeSpan() * Bullet->ProjectileMovementComponent->MaxSpeed,2) - 
-						FMath::Pow(Location.Z - CameraActor->GetActorLocation().Z,2));
+					FMath::Pow(Bullet->GetLifeSpan() * Bullet->ProjectileMovementComponent->MaxSpeed, 2) -
+					FMath::Pow(Location.Z - CameraActor->GetActorLocation().Z, 2));
 				FVector MaxRange = FVector(Max, 0.f, 0.f);
-
+			
 				const FName TraceTag("XTraceTag");
-
+				//Debug trace line
 				//World->DebugDrawTraceTag = TraceTag;
 
-				FCollisionQueryParams ColParams;
-				ColParams.bTraceComplex = true;
-				ColParams.bTraceAsyncScene = true;
-				ColParams.bReturnPhysicalMaterial = false;
-				ColParams.TraceTag = TraceTag;
-
+				FCollisionQueryParams ColisionParams;
+				ColisionParams.bTraceComplex = true;
+				ColisionParams.bTraceAsyncScene = true;
+				ColisionParams.bReturnPhysicalMaterial = false;
+				ColisionParams.TraceTag = TraceTag;
+				//Camera location
 				FRotator TraceRotation;
 				FVector TraceStart;
 				CameraActor->GetActorEyesViewPoint(TraceStart, TraceRotation);
-
+				//Calculate end of trace 
 				FVector TraceEnd = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
 				FHitResult HitOut;
-				World->LineTraceSingleByChannel(HitOut, TraceStart, TraceEnd, Owner->GetRootComponent()->GetCollisionObjectType(), ColParams);
-				
-				FVector End = TraceEnd;
+				//Create trace to find closest collision point
+				World->LineTraceSingleByChannel(HitOut, TraceStart, TraceEnd, Owner->GetRootComponent()->GetCollisionObjectType(), ColisionParams);
+
+				FVector End = TraceEnd;	//End point default is a trace end 
+				//If trace hits somthing, end point is set to hit location
 				if (HitOut.bBlockingHit)
 				{
 					End = HitOut.Location;
 				}
+				//For get simple vector of shoot 
 				End -= Location;
+				//Normalize vector
 				End.Normalize();
-				if (Bullet)
-				{
-					Bullet->SetOwner(Owner);
-					Bullet->FireInDirection(Rotation.Vector());
-				}
+			
+				Bullet->SetOwner(Owner);
+				Bullet->FireInDirection(End); 
 			}
 		}
 	}

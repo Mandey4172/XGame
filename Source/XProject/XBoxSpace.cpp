@@ -23,7 +23,7 @@ void AXBoxSpace::Tick(float DeltaTime)
 	if (SpaceSizeDelta.X > 0.f)
 	{
 		FVector NextSize = BoxCollisionComponent->GetScaledBoxExtent();
-		NextSize.X += DeltaTime * this->SpaceSizeDelta.X;
+		NextSize.X += DeltaTime * SpaceSizeDelta.X;
 		if (NextSize.X >= SpaceSizeMinimum.X)
 		{
 			NextSize.X = SpaceSizeMinimum.X;
@@ -37,7 +37,7 @@ void AXBoxSpace::Tick(float DeltaTime)
 	if (SpaceSizeDelta.Y > 0.f)
 	{
 		FVector NextSize = BoxCollisionComponent->GetScaledBoxExtent();
-		NextSize.Y += DeltaTime * this->SpaceSizeDelta.Y;
+		NextSize.Y += DeltaTime * SpaceSizeDelta.Y;
 		if (NextSize.Y >= SpaceSizeMinimum.Y)
 		{
 			NextSize.Y = SpaceSizeMinimum.Y;
@@ -51,7 +51,7 @@ void AXBoxSpace::Tick(float DeltaTime)
 	if (SpaceSizeDelta.Z > 0.f)
 	{
 		FVector NextSize = BoxCollisionComponent->GetScaledBoxExtent();
-		NextSize.Z += DeltaTime * this->SpaceSizeDelta.Z;
+		NextSize.Z += DeltaTime * SpaceSizeDelta.Z;
 		if (NextSize.Z >= SpaceSizeMinimum.Z)
 		{
 			NextSize.Z = SpaceSizeMinimum.Z;

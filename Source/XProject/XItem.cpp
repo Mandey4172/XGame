@@ -69,5 +69,5 @@ int AXItem::GetStackMaximalSize()
 
 void AXItem::AddToStack(int Val)
 {
-	this->StackSize += Val;
+	StackSize += Val;
 }

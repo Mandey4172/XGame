@@ -38,11 +38,11 @@ void AXProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor
 	{
 		//Sprawdzanie czy Actor to nasza postac [Rzutowanie actora na AGCharacter i sprawdzenie czy zrzutowany obiek nie jest null]
 		AXBaseCharacter * HitCharacter = Cast<AXBaseCharacter>(OtherActor);
-		AActor * Owner = this->GetOwner();
+		AActor * Owner = GetOwner();
 		if (HitCharacter  && HitCharacter != Owner)
 		{
 			//Zadanie obrazen
-			HitCharacter->InflictDamage(this->Damage, Hit);
+			HitCharacter->InflictDamage(Damage, Hit);
 		}
 		SetLifeSpan(0.000001f);
 	}

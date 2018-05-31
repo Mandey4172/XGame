@@ -10,7 +10,7 @@
 
 AXPlayerController::AXPlayerController()
 {
-	this->PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = true;
 	PickUpRange = 600.f;
 }
 
@@ -23,63 +23,33 @@ void AXPlayerController::Tick(float DeltaTime)
 	{
 		const FName TraceTag("XTraceTag");
 
-		//World->DebugDrawTraceTag = TraceTag;
-
-		FCollisionQueryParams ColParams;
-		ColParams.bTraceComplex = true;
-		ColParams.bTraceAsyncScene = true;
-		ColParams.bReturnPhysicalMaterial = false;
-		ColParams.TraceTag = TraceTag;
+		//Create a trace line to find interactions
+		FCollisionQueryParams ColisionParams;
+		ColisionParams.bTraceComplex = true;
+		ColisionParams.bTraceAsyncScene = true;
+		ColisionParams.bReturnPhysicalMaterial = false;
+		ColisionParams.TraceTag = TraceTag;
 
 		FRotator Rotation;
-		FVector Start;
-		CameraActor->GetActorEyesViewPoint(Start, Rotation);
+		FVector Start, End;
 		FVector MaxRange = FVector(PickUpRange, 0.f, 0.f);
-		FVector End = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
 		FHitResult HitOut;
-		World->LineTraceSingleByChannel(HitOut, Start, End, Pawn->GetRootComponent()->GetCollisionObjectType(), ColParams);
-		AActor * Actor = HitOut.Actor.Get();
-		AXItem * Item = Cast<AXItem>(Actor);
-		if (Item && HitOut.Distance < PickUpRange)
+
+		CameraActor->GetActorEyesViewPoint(Start, Rotation);
+		End = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
+		
+		World->LineTraceSingleByChannel(HitOut, Start, End, Pawn->GetRootComponent()->GetCollisionObjectType(), ColisionParams);
+		AXItem * Item = Cast<AXItem>(HitOut.Actor.Get());
+		//If hit actor is Item and it's in distance 
+		if (Item && FVector::Distance(GetPawn()->GetActorLocation(), Item->GetActorLocation()) <= PickUpRange)
 		{
-			ItemColdown = 2.5f;
 			ItemToPick = Item;
 		}
-		/*this->CursorLocation = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
-		if (HitOut.bBlockingHit)
-		{
-			this->CursorLocation = HitOut.Location;
-		}*/
-		//AXBaseCharacter * Character = Cast<AXBaseCharacter>(Pawn);
-		//if (Character)
-		//{
-		//	FVector CharacterStart = Character->GetActorLocation();
-		//	FVector CharacterEnd = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
-		//	if (Actor)
-		//	{
-		//		CharacterEnd = HitOut.Location;
-		//	}
-		//	FVector Result = CharacterEnd - CharacterStart;
-		//	FRotator ARot = Character->GetActorRotation();
-		//	ARot.Pitch = Result.Rotation().Pitch;
-		//	Character->AimPitch = ARot.Pitch;
-		//	//Character->SetActorRotation(ARot);
-		//}
-		
-		
-		
-		//End -= Pawn->GetActorLocation();
-		//End.Normalize();
-		////R = End.Rotation();
-		//AXBaseCharacter * Character = Cast<AXBaseCharacter>(Pawn);
-		//if (Character)
-		//	Character->AimPitch = End.Rotation().Pitch;
-		//World->LineTraceSingleByChannel(Start, End,Pawn->GetRootComponent()->GetCollisionObjectType());
 	}
-	if (ItemColdown > 0.f)
+	//Clear item to pick up when you leave pick up distance
+	if (Pawn && ItemToPick)
 	{
-		ItemColdown -= DeltaTime;
-		if (ItemColdown <= 0.f)
+		if(FVector::Distance(Pawn->GetActorLocation(), ItemToPick->GetActorLocation()) > PickUpRange)
 			ItemToPick = nullptr;
 	}
 }
@@ -101,7 +71,7 @@ AXCamera * AXPlayerController::SetupCamera(AActor * NOwner)
 		{
 			SpawnParams.Owner = NOwner;
 		}
-		this->CameraActor = World->SpawnActor<AXCamera>(CameraClass->GetDefaultObject()->GetClass(), Location, Rotation, SpawnParams);
+		CameraActor = World->SpawnActor<AXCamera>(CameraClass->GetDefaultObject()->GetClass(), Location, Rotation, SpawnParams);
 	}
 	SetViewTarget(CameraActor);
 
@@ -171,8 +141,6 @@ void AXPlayerController::AddYawInput(float Value)
 		FRotator Rotation = Character->GetActorRotation();
 		Rotation.Yaw += Value;
 		Character->SetActorRotation(Rotation);
-		if (GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, Rotation.ToString() );
 	}
 }
 
@@ -235,32 +203,5 @@ void AXPlayerController::DropItemInput()
 
 void AXPlayerController::TestInput()
 {
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character)
-	{
-		TArray<AXItem *> Items = Character->GetBackpack();
-		if (Items.Num())
-		{
-			AXOneHandWeapon * MainWeapon = nullptr;
-			AXOneHandWeapon * OffWeapon = nullptr;
 
-			for (AXItem * Item : Items)
-			{
-				AXTwoHandWeapon * TwoHand = Cast<AXTwoHandWeapon>(Item);
-				if (TwoHand)
-				{
-					Character->EquipTwoHandWeapon(TwoHand);
-					return;
-				}
-				if(!MainWeapon)
-					MainWeapon = Cast<AXOneHandWeapon>(Item);
-				else if(!OffWeapon)
-					OffWeapon = Cast<AXOneHandWeapon>(Item);
-			}
-			if (MainWeapon)
-			{
-				Character->EquipOneHandWeapon(MainWeapon, OffWeapon);
-			}
-		}
-	}
 }

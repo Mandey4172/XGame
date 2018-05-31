@@ -69,27 +69,25 @@ protected:
 	void StartJumpInput();
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	void StopJumpInput();
-	
+	//Pickup item
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	void PickUpItemInput();
-
+	//Drop item
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	void DropItemInput();
-
+	//Set default cammera class
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AXCamera> CameraClass;
-
+	//Camera ref
 	UPROPERTY(EditAnywhere)
 	AXCamera * CameraActor;
-
+	//Item to pick up
 	UPROPERTY(EditAnywhere)
 	AXItem * ItemToPick;
-
+	//Pick up range
 	UPROPERTY(EditAnywhere)
 	float PickUpRange;
-
-	float ItemColdown;
-
+	//to test some shit
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	void TestInput();
 };

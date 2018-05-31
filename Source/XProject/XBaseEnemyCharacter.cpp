@@ -9,6 +9,6 @@ AXBaseEnemyCharacter::AXBaseEnemyCharacter()
 {
 	BlackboardAsset = NewObject<UBlackboardData>();
 	BehaviorTreeAsset = NewObject<UBehaviorTree>();
-	this->BehaviorTreeAsset->BlackboardAsset = this->BlackboardAsset;
+	BehaviorTreeAsset->BlackboardAsset = BlackboardAsset;
 }
 
