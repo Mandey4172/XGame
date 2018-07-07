@@ -32,6 +32,11 @@ void AXProjectile::BeginPlay()
 	
 }
 
+void AXProjectile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 void AXProjectile::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult & Hit)
 {
 	if (OtherActor != this)

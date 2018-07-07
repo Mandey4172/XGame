@@ -23,6 +23,14 @@ EBTNodeResult::Type UBTTask_MoveToEnemy::ExecuteTask(UBehaviorTreeComponent & Ow
 		AIController->MoveToActor(Enemy, Distance, true, true, true, 0, true);
 		return EBTNodeResult::Succeeded;
 	}
+	if (Enemy && AIController->GetPawn())
+	{
+		FVector Face = Enemy->GetActorLocation() - AIController->GetPawn()->GetActorLocation();
+		Face.Z = 0;
+		Face.Normalize();
+		AIController->GetPawn()->SetActorRotation(Face.Rotation());
+	}
+	
 	/*if (Enemy &&  AIController)
 	{
 		AIController->MoveToActor(Enemy, 5.f, true, true, true, 0, true);

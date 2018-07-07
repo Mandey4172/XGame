@@ -17,6 +17,9 @@ public:
 
 	AXBaseAIController(const class FObjectInitializer& ObjectInitializer );
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	class UBlackboardComponent * BlackboardComp;
 
@@ -26,6 +29,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	uint8 EnemyKeyID;
 
+protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 	/* Called whenever the controller possesses a character bot */

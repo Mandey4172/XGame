@@ -8,11 +8,7 @@ AXSpace::AXSpace()
 {
 	// Czy character ma wywowylac metode Tick()
 	PrimaryActorTick.bCanEverTick = true;
-	
-	/*RootComponent = GetCollisionComponent();
 
-	*/
-	//
 	Damage = 10;
 	// Zniszcz po 
 	InitialLifeSpan = 10.0f;
@@ -22,12 +18,11 @@ AXSpace::AXSpace()
 void AXSpace::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
-
 
 void AXSpace::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 }
 
 float AXSpace::GetDamage()
@@ -37,10 +32,9 @@ float AXSpace::GetDamage()
 
 void AXSpace::OnCollision(AActor * OtherActor, const FHitResult & SweepResult)
 {
-
 }
 
-USphereComponent * AXSpace::GetCollisionComponent()
+UShapeComponent * AXSpace::GetCollisionComponent()
 {
 	return nullptr;
 }

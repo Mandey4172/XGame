@@ -20,6 +20,10 @@ AXSphareSpace::AXSphareSpace()
 
 void AXSphareSpace::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+	/*
+	* Change size if needed;
+	*/
 	if (RadiusDelta > 0.f)
 	{
 		float NextSize = SphareCollisionComponent->GetScaledSphereRadius() + (DeltaTime * RadiusDelta);
@@ -30,10 +34,15 @@ void AXSphareSpace::Tick(float DeltaTime)
 	}
 }
 
-USphereComponent * AXSphareSpace::GetCollisionComponent()
+UShapeComponent * AXSphareSpace::GetCollisionComponent()
 {
-	USphereComponent * CollisionComponent = Cast<USphereComponent>(SphareCollisionComponent);
+	UShapeComponent * CollisionComponent = Cast<UShapeComponent>(SphareCollisionComponent);
 	return CollisionComponent;
+}
+
+void AXSphareSpace::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AXSphareSpace::SetRadiusDelta(float Radius)

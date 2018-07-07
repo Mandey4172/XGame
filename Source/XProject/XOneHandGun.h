@@ -18,15 +18,14 @@ class XPROJECT_API AXOneHandGun : public AXOneHandWeapon
 public:
 	AXOneHandGun();
 
-	UFUNCTION(BlueprintCallable)
-	virtual void Use(class AXBaseCharacter * Character) override;
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
+	//UFUNCTION(BlueprintCallable)
+	//virtual void Use(class AXBaseCharacter * Character) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnUse(class AXBaseCharacter * Character) override;
-
-	UFUNCTION(BlueprintCallable)
-	virtual void Tick(float DeltaTime) override;
 
 protected:
 

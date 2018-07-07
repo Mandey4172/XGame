@@ -37,6 +37,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddToStack(int Val);
+
 	//UFUNCTION(BlueprintCallable)
 	//	void OnPick();
 

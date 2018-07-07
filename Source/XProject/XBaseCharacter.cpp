@@ -31,7 +31,7 @@ AXBaseCharacter::AXBaseCharacter()
 	Health = MaxHealth;
 	AimPitch = 0.f;
 
-	DropOffset = FVector(100.f,0.f,0.f);
+	DropOffset = FVector(150.f,0.f,0.f);
 }
 
 // Called when the game starts or when spawned
@@ -49,9 +49,9 @@ void AXBaseCharacter::BeginPlay()
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		//Parametry dodawania postaci do gry
+		//Parametry aktora podczas dodawania 
 		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
+		SpawnParams.Owner = this;	
 		bool IsOneHand = true;
 		AXWeapon * RWeapon = World->SpawnActor<AXWeapon>(RightHandWeaponClass, SpawnParams);
 		AXWeapon * LWeapon = World->SpawnActor<AXWeapon>(LeftHandWeaponClass, SpawnParams);
@@ -213,7 +213,8 @@ void AXBaseCharacter::DropItem(AXItem * Item, int Amount)
 		}
 		if (exist)
 		{
-			FRotator Rotation = GetActorRotation();
+			FRotator Rotation = FRotator::ZeroRotator;
+			Rotation.Yaw = GetActorRotation().Yaw;
 			FVector Location = GetActorLocation() + Rotation.RotateVector(DropOffset);
 			
 
@@ -281,7 +282,6 @@ void AXBaseCharacter::EquipTwoHandWeapon(AXTwoHandWeapon * Weapon)
 			//Przytwierdzenie do postaci
 			FAttachmentTransformRules ARules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
 			RightHandWeapon->AttachToComponent(GetMesh(), ARules, TEXT("RightHandWeaponSocket"));
-			
 		}
 	}
 }

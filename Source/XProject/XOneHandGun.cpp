@@ -12,14 +12,14 @@ AXOneHandGun::AXOneHandGun()
 	UseDelay = 0.5f;
 }
 
-void AXOneHandGun::Use(AXBaseCharacter * Character)
-{
-	if (Coldown <= 0.f)
-	{
-		OnUse(Character);
-		Coldown = OnUseColdown;
-	}
-}
+//void AXOneHandGun::Use(AXBaseCharacter * Character)
+//{
+//	if (Coldown <= 0.f)
+//	{
+//		OnUse(Character);
+//		Coldown = OnUseColdown;
+//	}
+//}
 
 void AXOneHandGun::OnUse(AXBaseCharacter * Character)
 {
@@ -57,7 +57,7 @@ void AXOneHandGun::OnUse(AXBaseCharacter * Character)
 					FMath::Pow(Location.Z - CameraActor->GetActorLocation().Z, 2));
 				FVector MaxRange = FVector(Max, 0.f, 0.f);
 			
-				const FName TraceTag("XTraceTag");
+				const FName TraceTag("XGunTraceTag");
 				//Debug trace line
 				//World->DebugDrawTraceTag = TraceTag;
 

@@ -41,12 +41,17 @@ public:
 	FVector GetSpaceSizeMaximum();
 
 	UFUNCTION(BlueprintCallable)
-	virtual USphereComponent * GetCollisionComponent();
+	virtual UShapeComponent * GetCollisionComponent();
 
 	//// Komponent kuli z kolizja
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	UBoxComponent * BoxCollisionComponent;
 	
+protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 private:
 
 	UPROPERTY(EditAnywhere)

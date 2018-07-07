@@ -17,11 +17,11 @@ public:
 
 	AXTwoHandWeapon();
 
-	UFUNCTION(BlueprintCallable)
-	virtual void OnUse(class AXBaseCharacter * Character);
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Tick(float DeltaTime) override;
+	virtual void OnUse(class AXBaseCharacter * Character);
 
 protected:
 

@@ -4,6 +4,7 @@
 #include "XProjectile.h"
 #include "XBaseCharacter.h"
 #include "XPlayerController.h"
+#include "XBaseEnemyCharacter.h"
 
 AXTwoHandGun::AXTwoHandGun()
 {
@@ -11,6 +12,9 @@ AXTwoHandGun::AXTwoHandGun()
 	PrimaryActorTick.bCanEverTick = true;
 	Offset = FVector(50.f, 0.f, 0.f);
 	ReloadDelay = 0.5f;
+#if WITH_EDITOR
+	Debug = false;
+#endif
 }
 
 //void AXTwoHandGun::Use(AXBaseCharacter * Character)
@@ -19,10 +23,35 @@ AXTwoHandGun::AXTwoHandGun()
 
 void AXTwoHandGun::OnUse(AXBaseCharacter * Character)
 {
+	UWorld * World = GetWorld();
+	AXBaseEnemyCharacter * AIOwner = Cast<AXBaseEnemyCharacter>(GetOwner());
+	if (AIOwner && World)
+	{
+		FVector Location;
+		FRotator Rotation;
+		FActorSpawnParameters SpawnParams;
+
+		AIOwner->GetActorEyesViewPoint(Location, Rotation);
+		Rotation = AIOwner->GetActorRotation();
+		Rotation.Pitch = AIOwner->AimPitch;
+		FVector CurrentOffset = Offset;
+
+		//Calculate spawn location
+		Location += FTransform(Rotation).TransformVector(CurrentOffset);
+
+		//Spawn projectile
+		AXProjectile * Bullet = World->SpawnActor<AXProjectile>(BulletType, Location, Rotation, SpawnParams);
+		if (Bullet)
+		{
+			Bullet->SetOwner(AIOwner);
+			//Fire projectile
+			Bullet->FireInDirection(Rotation.Vector());
+		}
+		return;
+	}
+
 	AXBaseCharacter * Owner = Cast<AXBaseCharacter>(GetOwner());
 	AXPlayerController * PlayerController = Cast<AXPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	UWorld * World = GetWorld();
-
 	if (Owner && PlayerController && World)
 	{
 		AXCamera * CameraActor = PlayerController->GetCamera();
@@ -49,9 +78,7 @@ void AXTwoHandGun::OnUse(AXBaseCharacter * Character)
 					FMath::Pow(Location.Z - CameraActor->GetActorLocation().Z, 2));
 				FVector MaxRange = FVector(Max, 0.f, 0.f);
 
-				const FName TraceTag("XTraceTag");
-				//Debug trace line
-				//World->DebugDrawTraceTag = TraceTag;
+				const FName TraceTag("XGunTraceTag");
 
 				FCollisionQueryParams ColisionParams;
 				ColisionParams.bTraceComplex = true;
@@ -74,6 +101,12 @@ void AXTwoHandGun::OnUse(AXBaseCharacter * Character)
 				{
 					End = HitOut.Location;
 				}
+#if WITH_EDITOR
+				if (Debug)
+				{
+					DrawDebugLine(World, Location, End, FColor(255, 0, 0), false, -1, 0, 1);
+				}
+#endif
 				//For get simple vector of shoot 
 				End -= Location;
 				//Normalize vector

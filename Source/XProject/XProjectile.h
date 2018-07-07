@@ -16,21 +16,24 @@ public:
 	// Sets default values for this actor's properties
 	AXProjectile();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+		virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(BlueprintCallable)
+		void FireInDirection(const FVector& ShootDirection);
+
+	UFUNCTION(BlueprintCallable)
+		virtual void OnCollision(AActor * OtherActor, const FHitResult & SweepResult);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 
-	UFUNCTION(BlueprintCallable)
-	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-	
-	UFUNCTION(BlueprintCallable)
-	void FireInDirection(const FVector& ShootDirection);
-
-	UFUNCTION(BlueprintCallable)
-	virtual void OnCollision(AActor * OtherActor, const FHitResult & SweepResult);
-	
 	// Komponenty poruszania sie pocisku 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	UProjectileMovementComponent * ProjectileMovementComponent;

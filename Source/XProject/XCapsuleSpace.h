@@ -57,14 +57,18 @@ public:
 	float GetHeightMaximum();
 
 
-
 	UFUNCTION(BlueprintCallable)
-	virtual USphereComponent * GetCollisionComponent();
+	virtual UShapeComponent * GetCollisionComponent();
 
 	//// Komponent kuli z kolizja
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	UCapsuleComponent * CapsuleCollisionComponent;
 	
+protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -77,11 +81,11 @@ private:
 		float RadiusMaximum;
 
 	UPROPERTY(EditAnywhere)
-		float HeightDelta;
+		float HalfHeightDelta;
 
 	UPROPERTY(EditAnywhere)
-		float HeightMinimum;
+		float HalfHeightMinimum;
 
 	UPROPERTY(EditAnywhere)
-		float HeightMaximum;
+		float HalfHeightMaximum;
 };

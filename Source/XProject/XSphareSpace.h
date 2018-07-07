@@ -40,11 +40,16 @@ public:
 	float GetRadiusMaximum();
 
 	UFUNCTION(BlueprintCallable)
-	virtual USphereComponent * GetCollisionComponent();
+	virtual UShapeComponent * GetCollisionComponent();
 
 	// Komponent kuli z kolizja
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	USphereComponent * SphareCollisionComponent;
+
+protected:
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 

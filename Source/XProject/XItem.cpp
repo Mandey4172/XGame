@@ -26,7 +26,6 @@ AXItem::AXItem()
 void AXItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AXItem::Tick(float DeltaTime)

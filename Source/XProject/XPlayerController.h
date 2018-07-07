@@ -33,6 +33,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	AXItem * GetItemToPick();
 
+	UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	bool GetBlockInput();
+
+	UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	void SetBlockInput(bool NewBlockInput);
+
 	UPROPERTY(EditAnywhere)
 	FVector CursorLocation;
 
@@ -83,15 +89,17 @@ protected:
 	AXCamera * CameraActor;
 	//Item to pick up
 	UPROPERTY(EditAnywhere)
-	AXItem * ItemToPick;
+	AXItem * SelectedItem;
 	//Pick up range
 	UPROPERTY(EditAnywhere)
 	float PickUpRange;
+
+	//Block input
+	bool BlockInput;
+
 	//to test some shit
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	void TestInput();
 };
 
-//
-//UPROPERTY(EditAnywhere)
-//FVector MaxRange;
+

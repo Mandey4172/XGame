@@ -122,11 +122,12 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 	//Weapon
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	AXWeapon * LeftHandWeapon;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	AXWeapon * RightHandWeapon;
 
 	UPROPERTY(EditAnywhere)

@@ -19,9 +19,9 @@ void AXPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	UWorld * World = GetWorld();
 	APawn * Pawn = GetPawn();
-	if (CameraActor && World)
+	if (CameraActor && World && Pawn)
 	{
-		const FName TraceTag("XTraceTag");
+		const FName TraceTag("XCursorTraceTag");
 
 		//Create a trace line to find interactions
 		FCollisionQueryParams ColisionParams;
@@ -43,14 +43,14 @@ void AXPlayerController::Tick(float DeltaTime)
 		//If hit actor is Item and it's in distance 
 		if (Item && FVector::Distance(GetPawn()->GetActorLocation(), Item->GetActorLocation()) <= PickUpRange)
 		{
-			ItemToPick = Item;
+			SelectedItem = Item;
 		}
 	}
 	//Clear item to pick up when you leave pick up distance
-	if (Pawn && ItemToPick)
+	if (Pawn && SelectedItem)
 	{
-		if(FVector::Distance(Pawn->GetActorLocation(), ItemToPick->GetActorLocation()) > PickUpRange)
-			ItemToPick = nullptr;
+		if(FVector::Distance(Pawn->GetActorLocation(), SelectedItem->GetActorLocation()) > PickUpRange)
+			SelectedItem = nullptr;
 	}
 }
 
@@ -85,12 +85,22 @@ AXCamera * AXPlayerController::GetCamera()
 
 AXItem * AXPlayerController::GetItemToPick()
 {
-	return ItemToPick;
+	return SelectedItem;
+}
+
+bool AXPlayerController::GetBlockInput()
+{
+	return BlockInput;
+}
+
+void AXPlayerController::SetBlockInput(bool NewBlockInput)
+{
+	BlockInput = NewBlockInput;
 }
 
 void AXPlayerController::BeginPlay()
 {
-	
+	Super::BeginPlay();
 }
 
 void AXPlayerController::SetupInputComponent()
@@ -185,10 +195,10 @@ void AXPlayerController::StopJumpInput()
 void AXPlayerController::PickUpItemInput()
 {
 	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character && ItemToPick)
+	if (Character && SelectedItem)
 	{
-		Character->PickUpItem(ItemToPick);
-		ItemToPick = nullptr;
+		Character->PickUpItem(SelectedItem);
+		SelectedItem = nullptr;
 	}
 }
 

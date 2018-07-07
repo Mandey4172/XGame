@@ -8,6 +8,7 @@ AXBoxSpace::AXBoxSpace()
 	//// Uzywaj kuli do reprezentacji kolizji
 	BoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("SphereComponent"));
 	BoxCollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
+	
 	// Promien kuli
 	BoxCollisionComponent->InitBoxExtent(FVector(1.f,1.f,1.f));
 	// Ustawianie glownego komponentu jako component kuli
@@ -20,6 +21,10 @@ AXBoxSpace::AXBoxSpace()
 
 void AXBoxSpace::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+	/*
+	* Change size if needed;
+	*/
 	if (SpaceSizeDelta.X > 0.f)
 	{
 		FVector NextSize = BoxCollisionComponent->GetScaledBoxExtent();
@@ -64,10 +69,15 @@ void AXBoxSpace::Tick(float DeltaTime)
 	}
 }
 
-USphereComponent * AXBoxSpace::GetCollisionComponent()
+UShapeComponent * AXBoxSpace::GetCollisionComponent()
 {
-	USphereComponent * CollisionComponent = Cast<USphereComponent>(BoxCollisionComponent);
+	UShapeComponent * CollisionComponent = Cast<UShapeComponent>(BoxCollisionComponent);
 	return CollisionComponent;
+}
+
+void AXBoxSpace::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AXBoxSpace::SetSpaceSizeDelta(FVector SpaceSize)

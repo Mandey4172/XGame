@@ -19,14 +19,14 @@ public:
 
 	AXTwoHandGun();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	/*UFUNCTION(BlueprintCallable)
 	virtual void Use(class AXBaseCharacter * Character) override;*/
 
 	UFUNCTION(BlueprintCallable)
 	virtual void OnUse(class AXBaseCharacter * Character) override;
-
-	UFUNCTION(BlueprintCallable)
-	virtual void Tick(float DeltaTime) override;
 
 protected:
 
@@ -42,4 +42,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ReloadDelay;
 
+#if WITH_EDITOR
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Debug;
+
+#endif
 };

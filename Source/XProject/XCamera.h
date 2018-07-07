@@ -16,25 +16,22 @@ public:
 	// Sets default values for this actor's properties
 	AXCamera();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	void AddPitch(float Delta);
+		void AddPitch(float Delta);
 	UFUNCTION(BlueprintCallable)
-	void AddYaw(float Delta);
+		void AddYaw(float Delta);
 
 	UFUNCTION(BlueprintCallable)
-	float GetPitch();
+		float GetPitch();
 	UFUNCTION(BlueprintCallable)
-	float GetYaw();
+		float GetYaw();
 
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	FVector Offset;
@@ -50,4 +47,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float YawLimit;
+
+
 };

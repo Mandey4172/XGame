@@ -17,16 +17,17 @@ class XPROJECT_API AXOneHandWeapon : public AXWeapon
 public:
 	AXOneHandWeapon();	
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	UFUNCTION(BlueprintCallable)
 	virtual void OnUse(class AXBaseCharacter * Character) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetIsRightHand(bool RightHand);
-	UFUNCTION(BlueprintCallable)
-	bool IsRightHand();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void Tick(float DeltaTime) override;
+	bool IsRightHand();
 
 protected:
 

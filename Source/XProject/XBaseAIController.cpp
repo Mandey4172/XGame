@@ -16,12 +16,22 @@ AXBaseAIController::AXBaseAIController( const class FObjectInitializer& ObjectIn
 	BlackboardComp = ObjectInitializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("Blackboard Component"));
 }
 
+void AXBaseAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+void AXBaseAIController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AXBaseAIController::Possess(class APawn* InPawn)
 {
 	Super::Possess(InPawn);
 
 	AXBaseEnemyCharacter * AICharacter = Cast<AXBaseEnemyCharacter>(InPawn);
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("%s" + BlackboardComponent->GetName()));
+
 	if (AICharacter)
 	{
 		if (AICharacter->BehaviorTreeAsset)

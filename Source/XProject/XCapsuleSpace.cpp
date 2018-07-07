@@ -16,55 +16,33 @@ AXCapsuleSpace::AXCapsuleSpace()
 	RadiusMinimum = 0.f;
 	RadiusMaximum = 100.f;
 
-	HeightDelta = 0.f;
-	HeightMinimum = 0.f;
-	HeightMaximum = 100.f;
+	HalfHeightDelta = 0.f;
+	HalfHeightMinimum = 0.f;
+	HalfHeightMaximum = 100.f;
 }
 
 void AXCapsuleSpace::Tick(float DeltaTime)
 {
-	/*if (SpaceSizeDelta.X > 0.f)
+	Super::Tick(DeltaTime);
+	/*
+	* Change size if needed;
+	*/
+	if (RadiusDelta > 0.f)
 	{
-		FVector NextSize = CapsuleCollisionComponent->GetCollisionShape()->
-		NextSize.X += DeltaTime * SpaceSizeDelta.X;
-		if (NextSize.X >= SpaceSizeMinimum.X)
+		float NextSize = CapsuleCollisionComponent->GetScaledCapsuleRadius() + (DeltaTime * RadiusDelta);
+		if ((NextSize > 0.f) && (NextSize >= RadiusMinimum) && (NextSize <= RadiusMaximum))
 		{
-			NextSize.X = SpaceSizeMinimum.X;
+			CapsuleCollisionComponent->SetCapsuleRadius(NextSize);
 		}
-		else if (NextSize.X <= SpaceSizeMaximum.X)
-		{
-			NextSize.X = SpaceSizeMaximum.X;
-		}
-		CapsuleCollisionComponent->SetCapsuleSize(NextSize);
 	}
-	if (SpaceSizeDelta.Y > 0.f)
+	if (HalfHeightDelta > 0.f)
 	{
-		FVector NextSize = CapsuleCollisionComponent->GetScaledCapsuleSize();
-		NextSize.Y += DeltaTime * SpaceSizeDelta.Y;
-		if (NextSize.Y >= SpaceSizeMinimum.Y)
+		float NextSize = CapsuleCollisionComponent->GetScaledCapsuleHalfHeight() + (DeltaTime * HalfHeightDelta);
+		if ((NextSize > 0.f) && (NextSize >= HalfHeightMinimum) && (NextSize <= HalfHeightMaximum))
 		{
-			NextSize.Y = SpaceSizeMinimum.Y;
+			CapsuleCollisionComponent->SetCapsuleHalfHeight(NextSize);
 		}
-		else if (NextSize.Y <= SpaceSizeMaximum.Y)
-		{
-			NextSize.Y = SpaceSizeMaximum.Y;
-		}
-		CapsuleCollisionComponent->SetCapsuleSize(NextSize);
 	}
-	if (SpaceSizeDelta.Z > 0.f)
-	{
-		FVector NextSize = CapsuleCollisionComponent->GetScaledCapsuleSize();
-		NextSize.Z += DeltaTime * SpaceSizeDelta.Z;
-		if (NextSize.Z >= SpaceSizeMinimum.Z)
-		{
-			NextSize.Z = SpaceSizeMinimum.Z;
-		}
-		else if (NextSize.X <= SpaceSizeMaximum.X)
-		{
-			NextSize.Z = SpaceSizeMaximum.Z;
-		}
-		CapsuleCollisionComponent->SetCapsuleSize(NextSize);
-	}*/
 }
 
 void AXCapsuleSpace::SetRadiusDelta(float Radius)
@@ -103,38 +81,43 @@ float AXCapsuleSpace::GetRadiusMaximum()
 void AXCapsuleSpace::SetHeightDelta(float Height)
 {
 	if(Height < 0.f) Height = 0.f;
-	HeightDelta = Height;
+	HalfHeightDelta = Height;
 }
 
 float AXCapsuleSpace::GetHeightDelta()
 {
-	return HeightDelta;
+	return HalfHeightDelta;
 }
 
 void AXCapsuleSpace::SetHeightMinimum(float Minimum)
 {
 	if (Minimum < 0) Minimum = 0.f;
-	HeightMinimum = Minimum;
+	HalfHeightMinimum = Minimum;
 }
 
 float AXCapsuleSpace::GetHeightMinimum()
 {
-	return HeightMinimum;
+	return HalfHeightMinimum;
 }
 
 void AXCapsuleSpace::SetHeightMaximum(float Maximum)
 {
-	if (Maximum < HeightMinimum) Maximum = HeightMinimum;
-	HeightMaximum = Maximum;
+	if (Maximum < HalfHeightMinimum) Maximum = HalfHeightMinimum;
+	HalfHeightMaximum = Maximum;
 }
 
 float AXCapsuleSpace::GetHeightMaximum()
 {
-	return HeightMaximum;
+	return HalfHeightMaximum;
 }
 
-USphereComponent * AXCapsuleSpace::GetCollisionComponent()
+UShapeComponent * AXCapsuleSpace::GetCollisionComponent()
 {
-	USphereComponent * CollisionComponent = Cast<USphereComponent>(CapsuleCollisionComponent);
+	UShapeComponent * CollisionComponent = Cast<UShapeComponent>(CapsuleCollisionComponent);
 	return CollisionComponent;
+}
+
+void AXCapsuleSpace::BeginPlay()
+{
+	Super::BeginPlay();
 }

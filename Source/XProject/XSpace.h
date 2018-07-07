@@ -26,7 +26,7 @@ public:
 	virtual void OnCollision(AActor * OtherActor, const FHitResult & SweepResult);
 
 	UFUNCTION(BlueprintCallable)
-	virtual USphereComponent * GetCollisionComponent();
+	virtual UShapeComponent * GetCollisionComponent();
 
 protected:
 	// Called when the game starts or when spawned
