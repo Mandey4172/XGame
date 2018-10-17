@@ -24,7 +24,6 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	//virtual void Use(class AXBaseCharacter * Character) override;
 
-	UFUNCTION(BlueprintCallable)
 	virtual void OnUse(class AXBaseCharacter * Character) override;
 
 protected:

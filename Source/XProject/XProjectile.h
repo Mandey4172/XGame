@@ -20,13 +20,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-		virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION(BlueprintCallable)
-		void FireInDirection(const FVector& ShootDirection);
+	void FireInDirection(const FVector& ShootDirection);
 
-	UFUNCTION(BlueprintCallable)
-		virtual void OnCollision(AActor * OtherActor, const FHitResult & SweepResult);
+	virtual void OnCollision(AActor * OtherActor, const FHitResult & SweepResult) override;
 
 protected:
 	// Called when the game starts or when spawned

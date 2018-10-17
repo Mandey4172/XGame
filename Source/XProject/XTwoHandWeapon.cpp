@@ -10,6 +10,7 @@ AXTwoHandWeapon::AXTwoHandWeapon()
 
 void AXTwoHandWeapon::OnUse(AXBaseCharacter * Character)
 {
+
 }
 
 void AXTwoHandWeapon::Tick(float DeltaTime)

@@ -38,7 +38,7 @@ void AXPlayerController::Tick(float DeltaTime)
 		CameraActor->GetActorEyesViewPoint(Start, Rotation);
 		End = CameraActor->GetActorLocation() + CameraActor->GetActorRotation().RotateVector(MaxRange);
 		
-		World->LineTraceSingleByChannel(HitOut, Start, End, Pawn->GetRootComponent()->GetCollisionObjectType(), ColisionParams);
+		World->LineTraceSingleByChannel(HitOut, Start, End, ECollisionChannel::ECC_WorldDynamic, ColisionParams);
 		AXItem * Item = Cast<AXItem>(HitOut.Actor.Get());
 		//If hit actor is Item and it's in distance 
 		if (Item && FVector::Distance(GetPawn()->GetActorLocation(), Item->GetActorLocation()) <= PickUpRange)
@@ -90,12 +90,17 @@ AXItem * AXPlayerController::GetItemToPick()
 
 bool AXPlayerController::GetBlockInput()
 {
-	return BlockInput;
+	return BlockPawnInput;
 }
 
 void AXPlayerController::SetBlockInput(bool NewBlockInput)
 {
-	BlockInput = NewBlockInput;
+	BlockPawnInput = NewBlockInput;
+}
+
+AXItem * AXPlayerController::GetSelectedItem()
+{
+	return SelectedItem;
 }
 
 void AXPlayerController::BeginPlay()
@@ -108,108 +113,108 @@ void AXPlayerController::SetupInputComponent()
 
 	Super::SetupInputComponent();
 
-	// Set up movement bindings.
-	InputComponent->BindAxis("MoveForward", this, &AXPlayerController::MoveForwardInput);
-	InputComponent->BindAxis("MoveRight", this, &AXPlayerController::MoveRightInput);
-	// Set up "look" bindings.
-	InputComponent->BindAxis("Turn", this, &AXPlayerController::AddYawInput);
-	InputComponent->BindAxis("LookUp", this, &AXPlayerController::AddPitchInput);
-	// Set up jump bindings
-	InputComponent->BindAction("JumpInput", IE_Pressed, this, &AXPlayerController::StartJumpInput);
-	InputComponent->BindAction("JumpInput", IE_Released, this, &AXPlayerController::StopJumpInput);
-	// Use hand input bindings.
-	InputComponent->BindAction("UseLHandInput", IE_Pressed, this, &AXPlayerController::StartUseHandInput);
-	InputComponent->BindAction("UseLHandInput", IE_Released, this, &AXPlayerController::StopUseHandInput);
-	// Pick up input bindings.
-	InputComponent->BindAction("PickUpInput", IE_Pressed, this, &AXPlayerController::PickUpItemInput);
-	// Pick up input bindings.
-	InputComponent->BindAction("DropInput", IE_Pressed, this, &AXPlayerController::DropItemInput);
-	//
-	InputComponent->BindAction("TestInput", IE_Pressed, this, &AXPlayerController::TestInput);
+	//// Set up movement bindings.
+	//InputComponent->BindAxis("MoveForward", this, &AXPlayerController::MoveForwardInput);
+	//InputComponent->BindAxis("MoveRight", this, &AXPlayerController::MoveRightInput);
+	//// Set up "look" bindings.
+	//InputComponent->BindAxis("Turn", this, &AXPlayerController::AddYawInput);
+	//InputComponent->BindAxis("LookUp", this, &AXPlayerController::AddPitchInput);
+	//// Set up jump bindings
+	//InputComponent->BindAction("JumpInput", IE_Pressed, this, &AXPlayerController::StartJumpInput);
+	//InputComponent->BindAction("JumpInput", IE_Released, this, &AXPlayerController::StopJumpInput);
+	//// Use hand input bindings.
+	//InputComponent->BindAction("UseLHandInput", IE_Pressed, this, &AXPlayerController::StartUseHandInput);
+	//InputComponent->BindAction("UseLHandInput", IE_Released, this, &AXPlayerController::StopUseHandInput);
+	//// Pick up input bindings.
+	//InputComponent->BindAction("PickUpInput", IE_Pressed, this, &AXPlayerController::PickUpItemInput);
+	//// Pick up input bindings.
+	//InputComponent->BindAction("DropInput", IE_Pressed, this, &AXPlayerController::DropItemInput);
+	////
+	//InputComponent->BindAction("TestInput", IE_Pressed, this, &AXPlayerController::TestInput);
 }
 
-void AXPlayerController::MoveForwardInput(float Value)
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character)
-		Character->MoveForward(Value);
-}
+//void AXPlayerController::MoveForwardInput(float Value)
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character)
+//		Character->MoveForward(Value);
+//}
+//
+//void AXPlayerController::MoveRightInput(float Value)
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character)
+//		Character->MoveRight(Value);
+//}
 
-void AXPlayerController::MoveRightInput(float Value)
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character)
-		Character->MoveRight(Value);
-}
-
-void AXPlayerController::AddYawInput(float Value)
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (CameraActor && Character)
-	{
-		CameraActor->AddYaw(Value);
-		FRotator Rotation = Character->GetActorRotation();
-		Rotation.Yaw += Value;
-		Character->SetActorRotation(Rotation);
-	}
-}
-
-void AXPlayerController::AddPitchInput(float Value)
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (CameraActor && Character)
-	{
-		CameraActor->AddPitch(Value);
-		Character->AimPitch += Value;
-	}
-}
-
-void AXPlayerController::StartUseHandInput()
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if(Character)
-		Character->StartUseHand();
-}
-
-void AXPlayerController::StopUseHandInput()
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character)
-		Character->StopUseHand();
-}
-
-void AXPlayerController::StartJumpInput()
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character)
-		Character->StartJump();
-}
-
-void AXPlayerController::StopJumpInput()
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character)
-		Character->StopJump();
-}
-
-void AXPlayerController::PickUpItemInput()
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character && SelectedItem)
-	{
-		Character->PickUpItem(SelectedItem);
-		SelectedItem = nullptr;
-	}
-}
-
-void AXPlayerController::DropItemInput()
-{
-	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
-	if (Character && Character->GetBackpack().Num() > 0)
-	{
-		Character->DropItem(Character->GetBackpack()[0], 1);
-	}
-}
+//void AXPlayerController::AddYawInput(float Value)
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (CameraActor && Character)
+//	{
+//		CameraActor->AddYaw(Value);
+//		FRotator Rotation = Character->GetActorRotation();
+//		Rotation.Yaw += Value;
+//		Character->SetActorRotation(Rotation);
+//	}
+//}
+//
+//void AXPlayerController::AddPitchInput(float Value)
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (CameraActor && Character)
+//	{
+//		CameraActor->AddPitch(Value);
+//		Character->AimPitch += Value;
+//	}
+//}
+//
+//void AXPlayerController::StartUseHandInput()
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if(Character)
+//		Character->StartUseHand();
+//}
+//
+//void AXPlayerController::StopUseHandInput()
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character)
+//		Character->StopUseHand();
+//}
+//
+//void AXPlayerController::StartJumpInput()
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character)
+//		Character->StartJump();
+//}
+//
+//void AXPlayerController::StopJumpInput()
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character)
+//		Character->StopJump();
+//}
+//
+//void AXPlayerController::PickUpItemInput()
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character && SelectedItem)
+//	{
+//		Character->PickUpItem(SelectedItem);
+//		SelectedItem = nullptr;
+//	}
+//}
+//
+//void AXPlayerController::DropItemInput()
+//{
+//	AXBaseCharacter * Character = Cast<AXBaseCharacter>(GetPawn());
+//	if (Character && Character->GetBackpack().Num() > 0)
+//	{
+//		Character->DropItem(Character->GetBackpack()[0], 1);
+//	}
+//}
 
 void AXPlayerController::TestInput()
 {

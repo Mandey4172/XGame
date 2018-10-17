@@ -20,8 +20,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable)
-	virtual void OnUse(class AXBaseCharacter * Character);
+
+	virtual void OnUse(class AXBaseCharacter * Character) override;
 
 protected:
 

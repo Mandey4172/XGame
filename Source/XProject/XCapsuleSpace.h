@@ -21,22 +21,22 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-		void SetRadiusDelta(float Height);
+	void SetRadiusDelta(float Height);
 
 	UFUNCTION(BlueprintCallable)
-		float GetRadiusDelta();
+	float GetRadiusDelta();
 
 	UFUNCTION(BlueprintCallable)
-		void SetRadiusMinimum(float Minimum);
+	void SetRadiusMinimum(float Minimum);
 
 	UFUNCTION(BlueprintCallable)
-		float GetRadiusMinimum();
+	float GetRadiusMinimum();
 
 	UFUNCTION(BlueprintCallable)
-		void SetRadiusMaximum(float Maximum);
+	void SetRadiusMaximum(float Maximum);
 
 	UFUNCTION(BlueprintCallable)
-		float GetRadiusMaximum();
+	float GetRadiusMaximum();
 
 	UFUNCTION(BlueprintCallable)
 	void SetHeightDelta(float SpaceSize);
@@ -56,9 +56,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetHeightMaximum();
 
-
-	UFUNCTION(BlueprintCallable)
-	virtual UShapeComponent * GetCollisionComponent();
+	UShapeComponent * GetCollisionComponent() override;
 
 	//// Komponent kuli z kolizja
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)

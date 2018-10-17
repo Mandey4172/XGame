@@ -39,8 +39,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetRadiusMaximum();
 
-	UFUNCTION(BlueprintCallable)
-	virtual UShapeComponent * GetCollisionComponent();
+	virtual UShapeComponent * GetCollisionComponent() override;
 
 	// Komponent kuli z kolizja
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)

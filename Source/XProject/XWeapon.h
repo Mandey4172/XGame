@@ -25,7 +25,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	USkeletalMeshComponent * ActorMeshComponent;
 
-	UFUNCTION(BlueprintCallable)
 	virtual void Tick(float DeltaTime) override;
 
 protected:

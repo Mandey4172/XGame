@@ -53,10 +53,10 @@ void AXCamera::Tick(float DeltaTime)
 		FRotator Rotation;
 		Owner->GetActorEyesViewPoint(Location,Rotation);
 
-		FRotator CameraRotation(Pitch, Yaw, 0);
+		FRotator CameraRotation(Rotation.Pitch, Rotation.Yaw, 0);
 		FVector Result = CameraRotation.RotateVector(Offset);
 		SetActorLocation(Location + Result);
-		SetActorRotation(FRotator(Pitch, Yaw, 0));
+		SetActorRotation(CameraRotation);
 	}
 }
 

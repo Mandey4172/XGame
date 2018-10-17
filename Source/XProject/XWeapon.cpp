@@ -9,7 +9,7 @@ AXWeapon::AXWeapon()
 	PrimaryActorTick.bCanEverTick = false;
 
 	ActorMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("StaticMeshComponent"));
-	ActorMeshComponent->AttachTo(GetRootComponent());
+	ActorMeshComponent->SetupAttachment(GetRootComponent());
 	//ActorMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("StaticMeshComponent"));
 	//// Prztwierdzenie do glownego komponentu
 	//ActorMeshComponent->AttachTo(GetRootComponent());

@@ -123,6 +123,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Called when the game destroys actor
+	virtual void EndPlay( const EEndPlayReason::Type EndPlayReason ) override;
+
 	//Weapon
 	UPROPERTY(VisibleAnywhere)
 	AXWeapon * LeftHandWeapon;

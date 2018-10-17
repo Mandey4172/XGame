@@ -24,7 +24,7 @@ AXBaseCharacter::AXBaseCharacter()
 	// Czy character ma wywowylac metode Tick()
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCapsuleComponent()->bGenerateOverlapEvents = true;
+	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this,&AXBaseCharacter::BeginOverlap);
 	
 	MaxHealth = 100.f;
@@ -71,6 +71,25 @@ void AXBaseCharacter::BeginPlay()
 		else
 			EquipTwoHandWeapon(nullptr);
 	}
+}
+
+void AXBaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UnequipWeapon();
+	while (Backpack.Num() > 0)
+	{
+		AXItem * Item = Backpack[0];
+		DropItem(Item);
+	}
+	/*if (Backpack.Num() > 0)
+	{
+		
+		for (AXItem * Item : Backpack)
+		{
+			DropItem(Item);
+		}
+	}*/
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame
@@ -186,6 +205,7 @@ void AXBaseCharacter::PickUpItem(AXItem * Item)
 	{
 		Item->SetActorHiddenInGame(true);
 		Item->SetActorEnableCollision(false);
+		Item->CollisionComponent->SetEnableGravity(false);
 		if (Item->IsStackable())
 		{
 			for(AXItem * BabckpackItem : Backpack)
@@ -198,7 +218,8 @@ void AXBaseCharacter::PickUpItem(AXItem * Item)
 				}
 			}
 		}
-		Backpack.Add(Item);
+		else
+			Backpack.Add(Item);
 	}
 }
 
@@ -231,18 +252,24 @@ void AXBaseCharacter::DropItem(AXItem * Item, int Amount)
 					if (World)
 					{
 						AXItem * NItem = World->SpawnActor<AXItem>(Item->GetClass(), Location, Rotation, SpawnParams);
-						NItem->AddToStack(-NItem->GetStackSize());
 						NItem->AddToStack(Amount);
-						Item->AddToStack(-Amount);
+						Item->AddToStack(Item->GetStackSize() - Amount);
+						
+						NItem->SetActorLocation(Location);
+						NItem->SetActorRotation(Rotation);
+						NItem->SetActorHiddenInGame(false);
+						NItem->SetActorEnableCollision(true);
+						NItem->CollisionComponent->SetEnableGravity(true);
+						
 						return;
 					}
-					//TODO::
 				}
 			}
 			Item->SetActorLocation(Location);
 			Item->SetActorRotation(Rotation);
 			Item->SetActorHiddenInGame(false);
 			Item->SetActorEnableCollision(true);
+			Item->CollisionComponent->SetEnableGravity(true);
 			Backpack.Remove(Item);
 		}
 	}
@@ -260,8 +287,6 @@ void AXBaseCharacter::EquipTwoHandWeapon(AXTwoHandWeapon * Weapon)
 		{
 			UnequipWeapon();
 			RightHandWeapon = Weapon;
-			RightHandWeapon->SetActorHiddenInGame(false);
-			RightHandWeapon->SetActorEnableCollision(true);
 			RightHandWeaponClass = Weapon->StaticClass();
 		}
 		else if (RightHandWeaponClass)
@@ -277,11 +302,14 @@ void AXBaseCharacter::EquipTwoHandWeapon(AXTwoHandWeapon * Weapon)
 		}
 		if (RightHandWeapon)
 		{
+			RightHandWeapon->SetActorHiddenInGame(false);
+			RightHandWeapon->SetActorEnableCollision(false);
+			RightHandWeapon->CollisionComponent->SetEnableGravity(true);
 			LeftHandWeapon = RightHandWeapon;
 			LeftHandWeaponClass = RightHandWeaponClass;
 			//Przytwierdzenie do postaci
-			FAttachmentTransformRules ARules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-			RightHandWeapon->AttachToComponent(GetMesh(), ARules, TEXT("RightHandWeaponSocket"));
+			FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+			RightHandWeapon->AttachToComponent(GetMesh(), AttachmentTransformRules, TEXT("RightHandWeaponSocket"));
 		}
 	}
 }
@@ -297,8 +325,6 @@ void AXBaseCharacter::EquipOneHandWeapon(AXOneHandWeapon * MainWeapon, AXOneHand
 		if (MainWeapon)
 		{
 			RightHandWeapon = MainWeapon;
-			RightHandWeapon->SetActorHiddenInGame(false);
-			RightHandWeapon->SetActorEnableCollision(true);
 			RightHandWeaponClass = MainWeapon->StaticClass();
 		}
 		else if(RightHandWeaponClass)
@@ -321,6 +347,10 @@ void AXBaseCharacter::EquipOneHandWeapon(AXOneHandWeapon * MainWeapon, AXOneHand
 		}
 		if (RightHandWeapon)
 		{
+			RightHandWeapon->SetActorHiddenInGame(false);
+			RightHandWeapon->SetActorEnableCollision(false);
+			RightHandWeapon->CollisionComponent->SetEnableGravity(true);
+
 			AXOneHandWeapon * RW = Cast<AXOneHandWeapon>(RightHandWeapon);
 			if (RW)
 			{
@@ -328,13 +358,16 @@ void AXBaseCharacter::EquipOneHandWeapon(AXOneHandWeapon * MainWeapon, AXOneHand
 			}
 			RightHandWeapon->SetOwner(this);
 			//Przytwierdzenie do postaci
-			FAttachmentTransformRules ARules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-			
-			RightHandWeapon->AttachToComponent(GetMesh(), ARules, TEXT("RightHandWeaponSocket"));
+			FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+			RightHandWeapon->AttachToComponent(GetMesh(), AttachmentTransformRules, TEXT("RightHandWeaponSocket"));
 			//AttachRootComponentTo(GetMesh(), TEXT("RightHandWeaponSocket"), EAttachLocation::SnapToTarget, true);
 		}
 		if (LeftHandWeapon)
 		{
+			LeftHandWeapon->SetActorHiddenInGame(false);
+			LeftHandWeapon->SetActorEnableCollision(false);
+			LeftHandWeapon->CollisionComponent->SetEnableGravity(true);
+
 			AXOneHandWeapon * LW = Cast<AXOneHandWeapon>(LeftHandWeapon);
 			if (LW)
 			{
@@ -342,8 +375,8 @@ void AXBaseCharacter::EquipOneHandWeapon(AXOneHandWeapon * MainWeapon, AXOneHand
 			}
 			LeftHandWeapon->SetOwner(this);
 			//Przytwierdzenie do postaci
-			FAttachmentTransformRules ARules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
-			LeftHandWeapon->AttachToComponent(GetMesh(), ARules, TEXT("LeftHandWeaponSocket"));
+			FAttachmentTransformRules AttachmentTransformRules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true);
+			LeftHandWeapon->AttachToComponent(GetMesh(), AttachmentTransformRules, TEXT("LeftHandWeaponSocket"));
 			//LeftHandWeapon->AttachRootComponentTo(GetMesh(), TEXT("LeftHandWeaponSocket"), EAttachLocation::SnapToTarget, true);
 		}
 	}
@@ -355,20 +388,25 @@ void AXBaseCharacter::UnequipWeapon()
 	if (RightHandWeapon)
 	{
 		RightHandWeapon->DetachFromActor(DRules);
-		RightHandWeapon->DetachRootComponentFromParent();
+		/*RightHandWeapon->DetachRootComponentFromParent();
 		RightHandWeapon->SetActorHiddenInGame(true);
-		RightHandWeapon->SetActorEnableCollision(false);
+		RightHandWeapon->SetActorEnableCollision(false);*/
 		if (RightHandWeapon == LeftHandWeapon)
 		{
 			LeftHandWeapon = nullptr;
 		}
+		/*RightHandWeapon->Destroy();*/
+		PickUpItem(RightHandWeapon);
 		RightHandWeapon = nullptr;
 	}
 	if (LeftHandWeapon)
 	{
 		LeftHandWeapon->DetachFromActor(DRules);
-		LeftHandWeapon->SetActorHiddenInGame(true);
+		/*LeftHandWeapon->SetActorHiddenInGame(true);
 		LeftHandWeapon->SetActorEnableCollision(false);
+		LeftHandWeapon->Destroy();*/
+		PickUpItem(LeftHandWeapon);
+		LeftHandWeapon = nullptr;
 	}
 }
 

@@ -39,8 +39,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)
 	void SetBlockInput(bool NewBlockInput);
 
+	UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	AXItem * GetSelectedItem();
+
 	UPROPERTY(EditAnywhere)
 	FVector CursorLocation;
+
 
 protected:
 
@@ -50,37 +54,38 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
 
-	//Move Forward
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void MoveForwardInput(float Value);
+	////Move Forward
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void MoveForwardInput(float Value);
 
-	//Move Right
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void MoveRightInput(float Value);
+	////Move Right
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void MoveRightInput(float Value);
 
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void AddYawInput(float Value);
-	
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void AddPitchInput(float Value);
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void AddYawInput(float Value);
+	//
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void AddPitchInput(float Value);
 
-	//Atack
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void StartUseHandInput();
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void StopUseHandInput();
+	////Atack
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void StartUseHandInput();
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void StopUseHandInput();
 
-	//Jump
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void StartJumpInput();
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void StopJumpInput();
-	//Pickup item
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void PickUpItemInput();
-	//Drop item
-	UFUNCTION(BlueprintCallable, Category = XPlayerController)
-	void DropItemInput();
+	////Jump
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void StartJumpInput();
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void StopJumpInput();
+	////Pickup item
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void PickUpItemInput();
+	////Drop item
+	//UFUNCTION(BlueprintCallable, Category = XPlayerController)
+	//void DropItemInput();
+
 	//Set default cammera class
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AXCamera> CameraClass;
@@ -95,7 +100,7 @@ protected:
 	float PickUpRange;
 
 	//Block input
-	bool BlockInput;
+	bool BlockPawnInput;
 
 	//to test some shit
 	UFUNCTION(BlueprintCallable, Category = XPlayerController)

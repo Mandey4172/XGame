@@ -40,8 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FVector GetSpaceSizeMaximum();
 
-	UFUNCTION(BlueprintCallable)
-	virtual UShapeComponent * GetCollisionComponent();
+	UShapeComponent * GetCollisionComponent() override;
 
 	//// Komponent kuli z kolizja
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)

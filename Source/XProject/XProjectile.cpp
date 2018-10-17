@@ -20,7 +20,7 @@ AXProjectile::AXProjectile()
 	
 	// Uwanie komponentu statycznej siatki do opisu wygladu pocisu
 	ActorMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	ActorMeshComponent->AttachTo(GetCollisionComponent());
+	ActorMeshComponent->SetupAttachment(GetCollisionComponent());
 	// Zniszcz po 
 	InitialLifeSpan = 30.0f;
 }
