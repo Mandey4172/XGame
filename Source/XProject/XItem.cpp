@@ -10,10 +10,10 @@ AXItem::AXItem()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	// Tworzenie komponentu kuli z kolizja
-	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	// Ustawianie promienia kuli
-	USphereComponent * MyCollisionComponent = Cast<USphereComponent>(CollisionComponent);
-	MyCollisionComponent->InitSphereRadius(1.0f);
+	UBoxComponent * MyCollisionComponent = Cast<UBoxComponent>(CollisionComponent);
+	MyCollisionComponent->SetBoxExtent(FVector(1.f,1.f,1.f));
 	// Ustanienie glownego komponentu jako komponentu kuli
 	RootComponent = CollisionComponent;
 

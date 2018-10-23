@@ -65,7 +65,7 @@ protected:
 	float OnUseColdown;
 
 protected:
-	UPROPERTY(EditAnywhere)
+
 	float Coldown;
 
 };

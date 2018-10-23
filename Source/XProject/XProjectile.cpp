@@ -7,6 +7,11 @@
 // Sets default values
 AXProjectile::AXProjectile()
 {
+	//
+	SphareCollisionComponent->SetGenerateOverlapEvents(true);
+	SphareCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AXProjectile::BeginOverlap);
+	SphareCollisionComponent->OnComponentHit.AddDynamic(this, &AXProjectile::OnHit);
+
 	// Uzywaj komponentu poruszania sie pocisku do opisu ruchu pocisku
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->SetUpdatedComponent(GetCollisionComponent());
@@ -22,7 +27,7 @@ AXProjectile::AXProjectile()
 	ActorMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	ActorMeshComponent->SetupAttachment(GetCollisionComponent());
 	// Zniszcz po 
-	InitialLifeSpan = 30.0f;
+	InitialLifeSpan = 100.0f;
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +35,14 @@ void AXProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AXProjectile::BeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (OtherActor != this)
+	{
+		Destroy();
+	}
 }
 
 void AXProjectile::Tick(float DeltaTime)
@@ -60,12 +73,6 @@ void AXProjectile::FireInDirection(const FVector & ShootDirection)
 
 void AXProjectile::OnCollision(AActor * OtherActor, const FHitResult & SweepResult)
 {
-	//Odbicie pocisku
-	/*FVector N = OtherActor->GetActorLocation() - GetActorLocation();
-	N.Z = 0;
-	FVector V = ProjectileMovementComponent->Velocity;
-	FVector R = V - (2 * V.ProjectOnTo(N));
-	ProjectileMovementComponent->Velocity = R;*/
 	Destroy();
 }
 

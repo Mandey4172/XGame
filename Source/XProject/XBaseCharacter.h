@@ -46,6 +46,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopJump();
 
+	//Run
+	UFUNCTION(BlueprintCallable)
+	void StartRun();
+	UFUNCTION(BlueprintCallable)
+	void StopRun();
+
 	//Call to damage character 
 	UFUNCTION(BlueprintCallable)
 	virtual void InflictDamage(float DamageAmount, const FHitResult& Hit);
@@ -57,7 +63,6 @@ public:
 	//Heal damage.
 	UFUNCTION(BlueprintCallable)
 	virtual float HealDamage(float HealAmount);
-
 
 	UFUNCTION(BlueprintCallable)
 	float GetHealth();
@@ -115,9 +120,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AXWeapon * GetLeftHandWeapon();
 
-	//Pitch of aim
-	float AimPitch;
-
 protected:
 
 	// Called when the game starts or when spawned
@@ -148,6 +150,9 @@ protected:
 	//
 	UPROPERTY(EditAnywhere)
 	float Health;
+
+	UPROPERTY(EditAnywhere)
+	float RunMultiply;
 
 	UPROPERTY(EditAnywhere)
 	FVector DropOffset;

@@ -29,7 +29,8 @@ AXBaseCharacter::AXBaseCharacter()
 	
 	MaxHealth = 100.f;
 	Health = MaxHealth;
-	AimPitch = 0.f;
+
+	RunMultiply = 2.f;
 
 	DropOffset = FVector(150.f,0.f,0.f);
 }
@@ -156,6 +157,16 @@ void AXBaseCharacter::StartJump()
 void AXBaseCharacter::StopJump()
 {
 	IsJumping = true;
+}
+
+void AXBaseCharacter::StartRun()
+{
+	GetCharacterMovement()->MaxWalkSpeed *= RunMultiply;
+}
+
+void AXBaseCharacter::StopRun()
+{
+	GetCharacterMovement()->MaxWalkSpeed /= RunMultiply;
 }
 
 float AXBaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

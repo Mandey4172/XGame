@@ -33,6 +33,9 @@ void AXPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 	// Set up jump bindings
 	InputComponent->BindAction("JumpInput", IE_Pressed, this, &AXPlayerCharacter::StartJump);
 	InputComponent->BindAction("JumpInput", IE_Released, this, &AXPlayerCharacter::StopJump);
+	// Set up run bindings
+	InputComponent->BindAction("RunInput", IE_Pressed, this, &AXPlayerCharacter::StartRun);
+	InputComponent->BindAction("RunInput", IE_Released, this, &AXPlayerCharacter::StopRun);
 	// Use hand input bindings.
 	InputComponent->BindAction("UseLHandInput", IE_Pressed, this, &AXPlayerCharacter::StartUseHand);
 	InputComponent->BindAction("UseLHandInput", IE_Released, this, &AXPlayerCharacter::StopUseHand);

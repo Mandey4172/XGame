@@ -27,6 +27,9 @@ public:
 
 	virtual void OnUse(class AXBaseCharacter * Character) override;
 
+	UFUNCTION(BlueprintCallable)
+	void Reload();
+
 protected:
 
 	// Called when the game starts or when spawned
@@ -39,7 +42,17 @@ protected:
 		FVector Offset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int MagazineSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float ReloadDelay;
+
+private:
+
+	FTimerHandle ReloadTimer;
+	bool IsReloading;
+	void PerformReload();
+	int InMagazine;
 
 #if WITH_EDITOR
 public:
